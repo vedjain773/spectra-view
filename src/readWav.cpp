@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "readWav.h"
 using namespace std;
 
@@ -29,6 +30,7 @@ wavHeaders readFile(string filePath) {
     }
 
     wavHeaders waveHeader;
+    vector<wavData> dataVector;
 
     waveHeader.chunkid = readChar(audioFile);
     waveHeader.chunkSize = read4Bytes(audioFile);
@@ -43,6 +45,24 @@ wavHeaders readFile(string filePath) {
     waveHeader.bitsPerSample = read2Bytes(audioFile);
     waveHeader.subChunk2Id = readChar(audioFile); 
     waveHeader.subChunk2Size = read4Bytes(audioFile);
+
+    int noOfSamples = waveHeader.subChunk2Size / (waveHeader.numChannels * waveHeader.bitsPerSample / 8);
+
+    for (int i = 0; i < noOfSamples; i++) {
+        wavData wavdata;
+        uint16_t left;
+        uint16_t right;
+
+        left = read2Bytes(audioFile);
+        right = read2Bytes(audioFile);
+
+        wavdata.mono = (left + right) / 2;
+
+        dataVector.push_back(wavdata);
+        cout << "Sample: " << i << " Mono: " << wavdata.mono << endl;
+    }
+
+    waveHeader.dataVector = dataVector;
 
     audioFile.close();
 

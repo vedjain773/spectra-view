@@ -3,6 +3,11 @@
 using namespace std;
 
 #include <fstream>
+#include <vector>
+
+struct wavData {
+    uint16_t mono;
+};
 
 struct wavHeaders {
     string chunkid;
@@ -18,6 +23,7 @@ struct wavHeaders {
     uint16_t bitsPerSample;
     string subChunk2Id;
     uint32_t subChunk2Size;
+    vector<wavData> dataVector;
 };
 
 string readChar(ifstream &file);
