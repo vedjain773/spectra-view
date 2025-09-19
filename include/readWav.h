@@ -6,7 +6,7 @@ using namespace std;
 #include <vector>
 
 struct wavData {
-    uint16_t mono;
+    int16_t mono;
 };
 
 struct wavHeaders {

@@ -50,8 +50,8 @@ wavHeaders readFile(string filePath) {
 
     for (int i = 0; i < noOfSamples; i++) {
         wavData wavdata;
-        uint16_t left;
-        uint16_t right;
+        int16_t left;
+        int16_t right;
 
         left = read2Bytes(audioFile);
         right = read2Bytes(audioFile);
@@ -59,7 +59,7 @@ wavHeaders readFile(string filePath) {
         wavdata.mono = (left + right) / 2;
 
         dataVector.push_back(wavdata);
-        cout << "Sample: " << i << " Mono: " << wavdata.mono << endl;
+        // cout << "Sample: " << i << " Mono: " << wavdata.mono << endl;
     }
 
     waveHeader.dataVector = dataVector;
