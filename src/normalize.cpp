@@ -18,6 +18,6 @@ vector<float> normalize(wavHeaders wavheader) {
         // cout << "Normalized: " << nsample << endl;
     }
 
-    cout << "Maximum Value: " << maxVal;
+    // cout << "Maximum Value: " << maxVal;
     return normalizedSamples;
 }
