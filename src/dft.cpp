@@ -7,20 +7,21 @@ using namespace std;
 
 void subMean(vector<float> &data) {
     float mean;
-    float sum;
+    float sum = 0.0;
 
     for (float data_i: data) {
         sum += data_i;
     }
 
     mean = sum / data.size();
+    cout << "Mean: " << mean << endl;
     
     for (int i = 0; i < data.size(); i++) {
         data[i] = data[i] - mean;
     } 
 }
 
-vector<cis> calcDFT(int N, vector<float> data) {
+vector<cis> calcDFT(int start, int N, vector<float> data) {
     vector<cis> data_k;
 
     for (int k = 0; k < N; k++) {
@@ -38,7 +39,7 @@ vector<cis> calcDFT(int N, vector<float> data) {
             x_n.real = real;
             x_n.imag = imag;
 
-            x_n = sMult(data[n], x_n);
+            x_n = sMult(data[start * N + n], x_n);
 
             x_k = Add(x_k, x_n);
         }

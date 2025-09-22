@@ -9,27 +9,36 @@ using namespace std;
 
 int main () {
     wavHeaders data = readFile("data/sample-3s.wav");
+    printWaveHeaders(data);
     vector<float> ndata = normalize(data);
 
-    vector<cis> dftRes;
-    dftRes = calcDFT(1000, ndata);
+    subMean(ndata);
 
-    vector<float> mags;
-    mags = calcMag(dftRes);
+    vector<vector<float>> dftMags;
 
-    int counter = 0;
-    for (float mag: mags) {
-        cout << counter << " " << mag << endl;
-        counter = counter + 1;
+    for (int i = 0; i < 140; i++) {
+        vector<cis> dftRes;
+        dftRes = calcDFT(i, 1000, ndata);
+
+        vector<float> mags;
+        mags = calcMag(dftRes);
+
+        dftMags.push_back(mags);
     }
 
-    fstream results("data/results.txt", ios::app | ios::out);
+    fstream freqCSV("data/freq.csv", ios::app | ios::out);
+    
+    for (int i = 0; i < 140; i++) {
+        freqCSV << i << ",";
+        
+        for (int j = 0; j < 500; j++) {
+            freqCSV << dftMags[i][j] << ",";
+        }
 
-    for (int k = 0; k < 1000; k++) {
-        results << (0.001 * k * 44100) << "  " << mags[k] << endl;
+        freqCSV << endl;
     }
 
-    results.close();
+    freqCSV.close();
 
     return 0;
 }

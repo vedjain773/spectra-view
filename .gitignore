@@ -1,2 +1,5 @@
 .vscode
 out
+python/media
+python/.venv
+python/__pycache__
