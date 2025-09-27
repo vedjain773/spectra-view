@@ -16,7 +16,7 @@ The DFT thus proves useful to extract the frequencies present in digital audio f
 - [X] Read WAV files and processe raw PCM samples (from scratch)
 - [X] Compute DFT on moving windows for time–frequency analysis
 - [X] Use the manim library to dynamically display these frequency bars
-- [] Build a real-time visualiser using OpenGL
+- [ ] Build a real-time visualiser using OpenGL
 
 ## Resources
 - [Coding Adventure: Sound](https://youtu.be/iA6wRgwl7k0?si=urdCEdR-AZQjt4Xy)
