@@ -1,44 +1,28 @@
 #include <iostream>
 #include <vector>
-#include <fstream>
 #include "readWav.h"
 #include "normalize.h"
 #include "mathUtils.h"
 #include "dft.h"
-using namespace std;
 
 int main () {
-    wavHeaders data = readFile("data/sample-3s.wav");
-    printWaveHeaders(data);
+    wavHeaders data = readFile("data/sin-2000-3.wav");
+    // printWaveHeaders(data);
     vector<float> ndata = normalize(data);
 
     subMean(ndata);
+    double windowSize = 512.0;
 
-    vector<vector<float>> dftMags;
+    vector<float> windowed_coeffs = hannCoeffs((int) windowSize);
+    vector<float> windowed_data = hannWindow(windowed_coeffs, 0, ndata);
 
-    for (int i = 0; i < 140; i++) {
-        vector<cis> dftRes;
-        dftRes = calcDFT(i, 1000, ndata);
+    vector<cis> dftPost = calcDFT((int) windowSize, windowed_data);
+    vector<float> mags = calcMag(dftPost);
 
-        vector<float> mags;
-        mags = calcMag(dftRes);
-
-        dftMags.push_back(mags);
+    for (int i = 0; i < windowSize / 2; i++) {
+        double freq = 44100.0 * i / windowSize;
+        std::cout << freq << ": " << mags[i] << "\n";
     }
-
-    fstream freqCSV("data/freq.csv", ios::app | ios::out);
-    
-    for (int i = 0; i < 140; i++) {
-        freqCSV << i << ",";
-        
-        for (int j = 0; j < 500; j++) {
-            freqCSV << dftMags[i][j] << ",";
-        }
-
-        freqCSV << endl;
-    }
-
-    freqCSV.close();
 
     return 0;
 }
