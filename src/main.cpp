@@ -4,24 +4,67 @@
 #include "normalize.h"
 #include "mathUtils.h"
 #include "dft.h"
+#include "draw.h"
+
+#include <thread>
+#include <chrono>
+
+#define FMIN 50
+#define FMAX 15000
+#define NO_OF_BANDS 100
 
 int main () {
-    wavHeaders data = readFile("data/sin-2000-3.wav");
-    // printWaveHeaders(data);
+    wavHeaders data = readFile("data/sample-3s.wav");
+    printWaveHeaders(data);
     vector<float> ndata = normalize(data);
+
+    int samples = ndata.size();
 
     subMean(ndata);
     double windowSize = 512.0;
+    int hopsize = 256.0;
 
     vector<float> windowed_coeffs = hannCoeffs((int) windowSize);
-    vector<float> windowed_data = hannWindow(windowed_coeffs, 0, ndata);
+    vector<int> be = bandEdges(FMIN, FMAX, NO_OF_BANDS);
 
-    vector<cis> dftPost = calcDFT((int) windowSize, windowed_data);
-    vector<float> mags = calcMag(dftPost);
+    vector <vector <float>> frames;
+    vector<float> prevFrame(windowSize, 0);
 
-    for (int i = 0; i < windowSize / 2; i++) {
-        double freq = 44100.0 * i / windowSize;
-        std::cout << freq << ": " << mags[i] << "\n";
+    std::cout << "Loading..." << "\n";
+
+    for (int i = 0; i < samples; i += hopsize) {
+        vector<float> windowed_data = hannWindow(windowed_coeffs, i, ndata);
+
+        vector<cis> dftPost = calcDFT((int) windowSize, windowed_data);
+        vector<float> mags = calcMag(dftPost);
+
+        int bandCount = 0;
+        int binCount = 0;
+
+        vector<float> bands(NO_OF_BANDS, 0.0);
+
+        while (bandCount < NO_OF_BANDS) {
+            while (binCount < windowSize / 2) {
+                double freq = 44100.0 * binCount / windowSize;
+                if (freq < be[bandCount]) {
+                    bands[bandCount] += mags[binCount];
+                    binCount++;
+                } else {
+                    break;
+                }
+            }
+
+            bandCount++;
+        }
+
+        processBands(bands, prevFrame, 0.7);
+        frames.push_back(bands);
+    }
+
+    std::cout << frames.size() << "\n";
+    for (auto &bandFrames: frames) {
+        drawBars(bandFrames, 100);
+        std::this_thread::sleep_for(std::chrono::milliseconds(6));  // ~30 FPS
     }
 
     return 0;

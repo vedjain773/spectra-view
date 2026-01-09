@@ -35,7 +35,7 @@ wavHeaders readFile(string filePath) {
     waveHeader.chunkid = readChar(audioFile);
     waveHeader.chunkSize = read4Bytes(audioFile);
     waveHeader.format = readChar(audioFile);
-    waveHeader.subChunk1Id = readChar(audioFile); 
+    waveHeader.subChunk1Id = readChar(audioFile);
     waveHeader.subChunk1Size = read4Bytes(audioFile);
     waveHeader.audioFormat = read2Bytes(audioFile);
     waveHeader.numChannels = read2Bytes(audioFile);
@@ -43,23 +43,41 @@ wavHeaders readFile(string filePath) {
     waveHeader.byteRate = read4Bytes(audioFile);
     waveHeader.blockAlign = read2Bytes(audioFile);
     waveHeader.bitsPerSample = read2Bytes(audioFile);
-    waveHeader.subChunk2Id = readChar(audioFile); 
+    waveHeader.subChunk2Id = readChar(audioFile);
     waveHeader.subChunk2Size = read4Bytes(audioFile);
 
     int noOfSamples = waveHeader.subChunk2Size / (waveHeader.numChannels * waveHeader.bitsPerSample / 8);
 
-    for (int i = 0; i < noOfSamples; i++) {
-        wavData wavdata;
-        int16_t left;
-        int16_t right;
+    if (waveHeader.bitsPerSample != 16) {
+        std::cout << "Incompatible";
+    }
 
-        left = read2Bytes(audioFile);
-        right = read2Bytes(audioFile);
+    if (waveHeader.numChannels == 2) {
+        for (int i = 0; i < noOfSamples; i++) {
+            wavData wavdata;
+            int16_t left;
+            int16_t right;
 
-        wavdata.mono = (left + right) / 2;
+            left = read2Bytes(audioFile);
+            right = read2Bytes(audioFile);
 
-        dataVector.push_back(wavdata);
-        // cout << "Sample: " << i << " Mono: " << wavdata.mono << endl;
+            wavdata.mono = (left + right) / 2;
+
+            dataVector.push_back(wavdata);
+        }
+    }
+
+    if (waveHeader.numChannels == 1) {
+        for (int i = 0; i < noOfSamples; i++) {
+            wavData wavdata;
+            int16_t mono;
+
+            mono = read2Bytes(audioFile);
+
+            wavdata.mono = mono;
+
+            dataVector.push_back(wavdata);
+        }
     }
 
     waveHeader.dataVector = dataVector;
