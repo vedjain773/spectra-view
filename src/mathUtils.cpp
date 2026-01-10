@@ -43,10 +43,18 @@ vector<int> bandEdges(int fmin, int fmax, int noOfBands) {
     return bandEdgeVec;
 }
 
-void processBands(vector<float> &bands, vector<float> &prevBands, float alpha) {
-    float sum = 0.0;
+void processBands(vector<float> &bands, vector<float> &prevBands) {
+    float greatest = 0.0;
 
     for (int i = 0; i < bands.size(); i++) {
+        float alpha;
+
+        if (bands[i] > prevBands[i]) {
+            alpha = 0.0;
+        } else {
+            alpha = 0.7;
+        }
+
         bands[i] = alpha * prevBands[i] + (1 - alpha) * bands[i];
     }
 
@@ -55,11 +63,13 @@ void processBands(vector<float> &bands, vector<float> &prevBands, float alpha) {
     }
 
     for (float &band: bands) {
-        sum += band;
+        if (band > greatest) {
+            greatest = band;
+        }
     }
 
     for (float &band: bands) {
-        band = band / sum;
+        band = band / greatest;
     }
 
     prevBands = bands;

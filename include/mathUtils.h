@@ -14,6 +14,6 @@ cis sMult(float scalar, cis A);
 float mag(cis A);
 
 vector<int> bandEdges(int fmin, int fmax, int noOfBands);
-void processBands(vector<float> &bands, vector<float> &prevBands, float alpha);
+void processBands(vector<float> &bands, vector<float> &prevBands);
 
 #endif

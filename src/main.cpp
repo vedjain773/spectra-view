@@ -11,11 +11,16 @@
 
 #define FMIN 50
 #define FMAX 15000
-#define NO_OF_BANDS 100
 
 int main () {
+    int width = 0;
+    int height = 0;
+
+    getTerminalSize(width, height);
+
+    const int NO_OF_BANDS = width / 3;
+
     wavHeaders data = readFile("data/sample-3s.wav");
-    printWaveHeaders(data);
     vector<float> ndata = normalize(data);
 
     int samples = ndata.size();
@@ -57,13 +62,12 @@ int main () {
             bandCount++;
         }
 
-        processBands(bands, prevFrame, 0.7);
         frames.push_back(bands);
     }
 
-    std::cout << frames.size() << "\n";
     for (auto &bandFrames: frames) {
-        drawBars(bandFrames, 100);
+        processBands(bandFrames, prevFrame);
+        drawBars(bandFrames, height);
         std::this_thread::sleep_for(std::chrono::milliseconds(6));  // ~30 FPS
     }
 
