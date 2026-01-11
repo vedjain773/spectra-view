@@ -45,22 +45,45 @@ vector<int> bandEdges(int fmin, int fmax, int noOfBands) {
 
 void processBands(vector<float> &bands, vector<float> &prevBands) {
     float greatest = 0.0;
+    float scale_factor = 2.0;
 
     for (int i = 0; i < bands.size(); i++) {
-        float alpha;
+        float ratio = i / (float) bands.size();
+        bands[i] = bands[i] * (1 + ratio * scale_factor);
+    }
 
+    for (int i = 0; i < bands.size(); i++) {
         if (bands[i] > prevBands[i]) {
-            alpha = 0.0;
+            float alpha_rise = 0.1;
+            bands[i] = alpha_rise * prevBands[i] + (1.0 - alpha_rise) * bands[i];
         } else {
-            alpha = 0.7;
+            float alpha_fall = 0.5;
+            bands[i] = alpha_fall * prevBands[i] + (1.0 - alpha_fall) * bands[i];
         }
-
-        bands[i] = alpha * prevBands[i] + (1 - alpha) * bands[i];
     }
 
     for (float &band: bands) {
-        band = log10(1.01f + band);
+        band = log10(1.0f + band);
     }
+
+    vector<float> gaussianBands = bands;
+
+    for (int i = 0; i < bands.size(); i++) {
+        float prev = 0.0f;
+        float ahead = 0.0f;
+
+        if (i != 0) {
+            prev = bands[i-1];
+        }
+
+        if (i != bands.size() - 1) {
+            ahead = bands[i+1];
+        }
+
+        gaussianBands[i] = (0.8 * bands[i] + 0.1 * prev + 0.1 * ahead);
+    }
+
+    bands = gaussianBands;
 
     for (float &band: bands) {
         if (band > greatest) {

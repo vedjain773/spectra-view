@@ -20,14 +20,14 @@ int main () {
 
     const int NO_OF_BANDS = width / 3;
 
-    wavHeaders data = readFile("data/sample-3s.wav");
+    wavHeaders data = readFile("data/synth.wav");
+    printWaveHeaders(data);
     vector<float> ndata = normalize(data);
-
     int samples = ndata.size();
 
     subMean(ndata);
-    double windowSize = 512.0;
-    int hopsize = 256.0;
+    double windowSize = 2048.0;
+    int hopsize = 512.0;
 
     vector<float> windowed_coeffs = hannCoeffs((int) windowSize);
     vector<int> be = bandEdges(FMIN, FMAX, NO_OF_BANDS);
@@ -35,9 +35,10 @@ int main () {
     vector <vector <float>> frames;
     vector<float> prevFrame(windowSize, 0);
 
-    std::cout << "Loading..." << "\n";
 
     for (int i = 0; i < samples; i += hopsize) {
+        std::cout << "Loading... " << i << "/" << samples << "\r";
+        std::cout.flush();
         vector<float> windowed_data = hannWindow(windowed_coeffs, i, ndata);
 
         vector<cis> dftPost = calcDFT((int) windowSize, windowed_data);
@@ -49,10 +50,14 @@ int main () {
         vector<float> bands(NO_OF_BANDS, 0.0);
 
         while (bandCount < NO_OF_BANDS) {
+            int count = 0;
             while (binCount < windowSize / 2) {
-                double freq = 44100.0 * binCount / windowSize;
+                double freq = data.sampleRate * binCount / windowSize;
+                float sum = 0.0;
                 if (freq < be[bandCount]) {
-                    bands[bandCount] += mags[binCount];
+                    count++;
+                    sum += mags[binCount];
+                    bands[bandCount] = sum / (float) count;
                     binCount++;
                 } else {
                     break;
@@ -66,9 +71,10 @@ int main () {
     }
 
     for (auto &bandFrames: frames) {
+        std::cout << "\n\n";
         processBands(bandFrames, prevFrame);
-        drawBars(bandFrames, height);
-        std::this_thread::sleep_for(std::chrono::milliseconds(6));  // ~30 FPS
+        drawBars(bandFrames, height - 2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(12));  // ~30 FPS
     }
 
     return 0;
