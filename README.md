@@ -1,5 +1,5 @@
 # Spectra-View
-A C++ project that analyzes audio by computing the Discrete Fourier Transform (DFT) on short time windows of a WAV file. The FFT magnitudes are then used to visualise the audio in the user's terminal.
+A C++ project (inspired by CAVA!) that analyzes audio by computing the Discrete Fourier Transform (DFT) on short time windows of a WAV file. The FFT magnitudes are then used to visualise the audio in the user's terminal.
 
 ![Visualiser demo](./assets/term.gif)
 
