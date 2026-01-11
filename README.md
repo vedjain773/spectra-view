@@ -1,8 +1,7 @@
 # Spectra-View
-A C++ and Manim based project that analyzes audio by computing the Discrete Fourier Transform (DFT) on short time windows of a WAV file. The FFT magnitudes are then exported to a CSV file and animated in Manim as dynamic bars.
+A C++ project that analyzes audio by computing the Discrete Fourier Transform (DFT) on short time windows of a WAV file. The FFT magnitudes are then used to visualise the audio in the user's terminal.
 
-## Demonstration
-![Visualiser demo](./assets/vis.gif)
+![Visualiser demo](./assets/term.gif)
 
 ## Brief Overview
 ### What is a Fourier Transform?
@@ -14,9 +13,13 @@ The DFT thus proves useful to extract the frequencies present in digital audio f
 
 ## Features / Roadmap
 - [X] Read WAV files and processe raw PCM samples (from scratch)
-- [X] Compute DFT on moving windows for time–frequency analysis
-- [X] Use the manim library to dynamically display these frequency bars
-- [ ] Build a real-time visualiser using OpenGL
+- [X] Use the Hann windowing function to smoothly transition between moving windows
+- [X] Compute the DFT of all samples inside the window
+- [X] Draw bars on the terminal to visualise the audio
+
+## Demo
+- Visualiser output for a 1000Hz pure sine wave
+![sine wave](../assets/sin-vis.gif)
 
 ## Resources
 - [Coding Adventure: Sound](https://youtu.be/iA6wRgwl7k0?si=urdCEdR-AZQjt4Xy)

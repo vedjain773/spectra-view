@@ -20,7 +20,7 @@ int main () {
 
     const int NO_OF_BANDS = width / 3;
 
-    wavHeaders data = readFile("data/synth.wav");
+    wavHeaders data = readFile("data/sample.wav");
     printWaveHeaders(data);
     vector<float> ndata = normalize(data);
     int samples = ndata.size();
