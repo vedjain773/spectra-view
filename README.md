@@ -19,7 +19,7 @@ The DFT thus proves useful to extract the frequencies present in digital audio f
 
 ## Demo
 - Visualiser output for a 1000Hz pure sine wave
-![sine wave](../assets/sin-vis.gif)
+![sine wave](./assets/sin-vis.gif)
 
 ## Resources
 - [Coding Adventure: Sound](https://youtu.be/iA6wRgwl7k0?si=urdCEdR-AZQjt4Xy)
